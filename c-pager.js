@@ -46,4 +46,4 @@ export default class CPager extends PolymerElement {
       }
 }
 
-window.customElements.define('c-pager', CTr);
+window.customElements.define('c-pager', CPager);
