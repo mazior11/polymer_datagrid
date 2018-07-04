@@ -6,4 +6,5 @@ export {default as HeaderData} from "./data-header";
 export {default as Row} from "./row";
 export {default as Column} from "./column";
 export {default as LazyPromise} from "./lazy-promise";
-export { default as ENUMS } from "./enums";
+export {default as ENUMS} from "./enums";
+export {default as GridConfiguration} from "./gridConfiguration";

@@ -1,5 +1,5 @@
 import { html, PolymerElement } from '@polymer/polymer/polymer-element.js';
-import Table, { BodyData, HeaderData, ENUMS } from "./core/index";
+import Table, { BodyData, HeaderData, ENUMS, GridConfiguration } from "./core/index";
 import CBody from "./c-body";
 import CPager from "./c-pager"
 
@@ -21,7 +21,7 @@ export default class CTable extends PolymerElement {
           <c-body data={{bodyData}} type="{{bodyType.BODY}}" id="body"></c-body>
         </div>
       </div>
-      <c-pager></c-pager>
+      <c-pager data={{data}} grid-configuration="{{gridConfiguration}}"></c-pager>
       <slot style='display: none'>
         <slot>
     `;
@@ -33,30 +33,36 @@ export default class CTable extends PolymerElement {
         value: 'c-table',
       },
       data: {
-        type: "array",
-        value: [],
+        type: Array,
+      },
+      gridConfiguration: {
+        type: Object,
+        value: new GridConfiguration()
       },
       columns: {
-        type: "array",
+        type: Array,
         value: []
       },
       table: {
-        type: "object",
+        type: Object,
         value: new Table()
       },
       headerData: {
-        type: "array",
+        type: Array,
         value: [],
         computed: '_processHeaderData(data)'
       },
       bodyData: {
-        type: "array",
+        type: Array,
         value: [],
         computed: '_processBodyData(data)'
       },
       bodyType: {
-        type: "object",
+        type: Object,
         value: ENUMS.ELEMENT_TYPE
+      },
+      autoPaging: {
+        type: Boolean,
       },
       autoGenerateColumns: {
         type: Boolean,

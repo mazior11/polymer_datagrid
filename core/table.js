@@ -2,6 +2,7 @@ import Body from "./body";
 import Header from "./header";
 import LazyPromise from "./lazy-promise";
 import BaseEl from "./base-el";
+import GridConfiguration from "./gridConfiguration";
 
 export default class Table extends BaseEl {
     constructor() {

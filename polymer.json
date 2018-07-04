@@ -4,5 +4,17 @@
     "rules": [
       "polymer-3"
     ]
-  }
+  },
+  "module-resolution": "node",
+  "builds": [ 
+    { 
+      "name": "bundled-amd", 
+      "bundle": { 
+        "inlineScripts": false 
+      }, 
+      "js": { 
+        "transformModulesToAmd": true 
+       } 
+    } 
+   ]
 }

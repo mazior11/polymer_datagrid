@@ -4,10 +4,10 @@ export let bindParams = function(func, ...bindedParams){
     }
 }
 
-export let generateUUID = function() { // Public Domain/MIT
+export let generateUUID = function() {
     var d = new Date().getTime();
     if (typeof performance !== 'undefined' && typeof performance.now === 'function'){
-        d += performance.now(); //use high-precision timer if available
+        d += performance.now();
     }
     return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (c) {
         var r = (d + Math.random() * 16) % 16 | 0;

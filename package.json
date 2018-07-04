@@ -3,6 +3,7 @@
   "main": "datagrid-element.js",
   "dependencies": {
     "@polymer/polymer": "^3.0.0",
+    "axios": "^0.18.0",
     "juicy-html": "^2.0.0",
     "rxjs": "^6.2.1"
   },

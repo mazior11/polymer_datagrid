@@ -1,5 +1,7 @@
 import { html, PolymerElement } from '@polymer/polymer/polymer-element.js';
+import {GridConfiguration} from "./core/index"
 import CTd from "./c-td";
+// import axios from "axios";
 
 export default class CPager extends PolymerElement {
     static get template() {
@@ -7,8 +9,8 @@ export default class CPager extends PolymerElement {
     <style>
 
     </style>
-    <template is="dom-repeat" items="{{rowData}}">
-        <c-td cell-data="{{item}}" col-number="[[index]]" row-number="[[rowNumber]]" type="{{type}}"></c-td>
+    <template is="dom-repeat" items="{{pages}}">
+        <a href="">{{item}}</a>
     </template>
     `;
     }
@@ -18,27 +20,23 @@ export default class CPager extends PolymerElement {
                 type: String,
                 value: 'c-pager',
             },
-            url: {
-                type: String,
-                value: "",
+            gridConfiguration: {
+                type: Object,
+                value: {}
             },
-            pageNumber: {
-                type: Number,
-                value: 1
-            },
-            numOfPages: {
-                type: Number,
-                value: 1,
+            data: {
+                type: Array,
             },
             pages: {
                 type: Array,
-                computed: "_computePages(numOfPages)"
+                computed: "_computePages(gridConfiguration.numOfPages)"
               },
         };
     }
 
     ready() {
         super.ready();
+        // this.data = axios.get(gridConfiguration.urlCompile(gridConfiguration))
     }
 
     _computePages(numOfPages) {
