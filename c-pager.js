@@ -1,7 +1,6 @@
 import { html, PolymerElement } from '@polymer/polymer/polymer-element.js';
 import {GridConfiguration} from "./core/index"
 import CTd from "./c-td";
-// import axios from "axios";
 
 export default class CPager extends PolymerElement {
     static get template() {
