@@ -15,7 +15,7 @@ export default class BodyData extends Data {
         super.column.bodySubColumn.dataRows.push(this)
     }
 
-    cleanUp(){
-        super.cleanUp();
+    Dispose(){
+        super.Dispose();
     }
 }

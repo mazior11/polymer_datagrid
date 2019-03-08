@@ -5,10 +5,6 @@ export default class CBody extends PolymerElement {
     static get template() {
         return html`
     <style>
-        :host {
-            <!-- display: table;
-            table-layout: fixed; -->
-        }
     </style>
     <template is="dom-repeat" items="{{data}}">
         <c-tr row-number="[[index]]" row-data="{{item}}" type="{{type}}"></c-tr>

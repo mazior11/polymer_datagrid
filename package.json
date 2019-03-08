@@ -5,7 +5,8 @@
     "@polymer/polymer": "^3.0.0",
     "axios": "^0.18.0",
     "juicy-html": "^2.0.0",
-    "rxjs": "^6.2.1"
+    "rxjs": "^6.4.0",
+    "sanitize-html": "^1.20.0"
   },
   "devDependencies": {
     "@polymer/iron-demo-helpers": "^3.0.0-pre.19",

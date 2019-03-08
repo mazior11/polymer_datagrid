@@ -1,4 +1,4 @@
-import LazyPromise from "./lazy-promise";
+import { EventManager } from "./core";
 import BaseEl from "./base-el";
 import ENUMS from "./enums";
 
@@ -7,9 +7,10 @@ export default class Data extends BaseEl {
         super();
         this._row;
         this._column;
+        this._renderCompleteEM = EventManager.createOneTimeEM();
         this.value;
         this.type = ENUMS.ELEMENT_TYPE.UNDEFINED;
-        this.renderComplete = new LazyPromise();
+        this.renderComplete = this._renderCompleteEM.eventPromise;
     }
 
     get column() {
@@ -28,8 +29,8 @@ export default class Data extends BaseEl {
         this._row = row;
     }
 
-    cleanUp(){
-        super.cleanUp();
+    Dispose(){
+        super.Dispose();
         this._row.removeElement(this);
         this._column.removeElement(this);
         this._row = null;

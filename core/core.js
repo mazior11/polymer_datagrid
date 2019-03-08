@@ -1,3 +1,6 @@
+import * as rxjs  from "rxjs";
+import * as rxjsOperators  from 'rxjs/operators';
+
 export let bindParams = function(func, ...bindedParams){
     return function(params){
         func(params, ...bindedParams)
@@ -15,3 +18,30 @@ export let generateUUID = function() {
         return (c === 'x' ? r : (r & 0x3 | 0x8)).toString(16);
     });
 }
+
+
+class OneTimeEventManager {
+    constructor(){
+        this.eventEmiter;
+        this.eventPromise = rxjs.Observable.create(e => this.eventEmiter = e)
+        .pipe(rxjsOperators.first())
+        .toPromise();
+    }
+}
+
+class EventManager {
+    constructor(){
+        this.eventEmiter;
+        this.eventPromise = rxjs.Observable.create(e => this.eventEmiter = e);
+    }
+}
+
+export let EventManager = {
+    createOneTimeEM(){
+        return new OneTimeEventManager();
+    },
+    createEM(){
+        return new EventManager();
+    }
+}
+

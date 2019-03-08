@@ -1,6 +1,5 @@
 import { html, PolymerElement } from '@polymer/polymer/polymer-element.js';
 import CTable from "./c-table";
-var axios = import('./node_modules/axios')
 /**
  * `datagrid-element`
  * 
@@ -15,6 +14,7 @@ class DatagridElement extends PolymerElement {
       <style>
       </style>
       <c-table 
+        data={{data}}
         gridConfiguration={{gridConfiguration}}
         autoPaging
         auto-generate-columns 

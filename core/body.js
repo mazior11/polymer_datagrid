@@ -7,7 +7,7 @@ export default class Body extends BaseBody {
         this.type = ENUMS.ELEMENT_TYPE.BODY;
     }
 
-    cleanUp(){
-        super.cleanUp();
+    Dispose(){
+        super.Dispose();
     }
 }

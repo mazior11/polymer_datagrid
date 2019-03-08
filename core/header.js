@@ -7,8 +7,8 @@ export default class Header extends BaseBody {
         this.type = ENUMS.ELEMENT_TYPE.HEADER;
     }
 
-    cleanUp(){
-        super.cleanUp();
+    Dispose(){
+        super.Dispose();
     }
 
 }

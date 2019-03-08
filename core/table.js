@@ -1,25 +1,30 @@
 import Body from "./body";
 import Header from "./header";
-import LazyPromise from "./lazy-promise";
 import BaseEl from "./base-el";
+import * as rxjs  from "rxjs";
+import * as rxjsOperators  from 'rxjs/operators';
+import { EventManager } from "./core";
 import GridConfiguration from "./gridConfiguration";
 
 export default class Table extends BaseEl {
-    constructor() {
+    constructor(addons) {
         super();
+        this._addons = addons || [];
         this._isReady = false;
         this._lastBodyCell;
         this._isRender = false;
         this._lastColumn;
+        this._whenDataReadyEM = EventManager.createOneTimeEM();
+        this._renderCompleteEM = EventManager.createOneTimeEM();
         this.columns = [];
         this.body = new Body(this);
         this.header = new Header(this);
-        this.whenDataReady = new LazyPromise();
-        this.renderComplete = new LazyPromise();
+        this.whenDataReady = this._whenDataReadyEM.eventPromise;
+        this.renderComplete = this._renderCompleteEM.eventPromise;
 
         Promise.all([this.body.whenDataReady, this.header.whenDataReady]).then(() => {
             this._isReady = true;
-            this.whenDataReady.resolve();
+            this._whenDataReadyEM.eventEmiter.next();
         })
 
         this.body.whenDataReady
@@ -30,9 +35,9 @@ export default class Table extends BaseEl {
 
         this.renderComplete
             .then(() => {
-                let width100Precent = "100%";
-                this.body.htmlEl.style.width = width100Precent;
-                this.header.htmlEl.style.width = width100Precent;
+                let width100Percent = "100%";
+                this.body.htmlEl.style.width = width100Percent;
+                this.header.htmlEl.style.width = width100Percent;
             })
  
         this.renderComplete
@@ -40,6 +45,10 @@ export default class Table extends BaseEl {
                 let bodyWrapper = this.htmlEl.$['body-wrapper-div'];
                 bodyWrapper.addEventListener("scroll", (e) => this._onBodyHorizontalScroll(e))
             })
+    }
+
+    get addons(){
+        return this.addons;
     }
 
     get htmlEl() {
@@ -71,16 +80,16 @@ export default class Table extends BaseEl {
             this._moveColumnDown(oldPosition, newPosition)
     }
 
-    cleanUp(){
-        super.cleanUp();
+    Dispose(){
+        super.Dispose();
         this._lastBodyCell = null;
         this._lastColumn = null;
 
-        this.columns.forEach(column => column.cleanUp())
+        this.columns.forEach(column => column.Dispose())
         this.columns = [];
 
-        this.body.cleanUp();
-        this.header.cleanUp();
+        this.body.Dispose();
+        this.header.Dispose();
 
         this.body = null;
         this.header = null;
@@ -137,7 +146,7 @@ export default class Table extends BaseEl {
         this._lastBodyCell.whenHTMLElConnected
             .then(() => {
                 this._isRender = true;
-                this.renderComplete.resolve();
+                this._renderCompleteEM.eventEmiter.next();
             })
     }
 }

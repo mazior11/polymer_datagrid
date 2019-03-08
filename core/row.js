@@ -32,10 +32,10 @@ export default class Row extends BaseEl {
         return this.dataColumns.splice(dataColumnIndex, 1);
     }
 
-    cleanUp(){
-        super.cleanUp();
+    Dispose(){
+        super.Dispose();
         this.table = null;
-        this.dataColumns.forEach(dataColumn => dataColumn.cleanUp())
+        this.dataColumns.forEach(dataColumn => dataColumn.Dispose())
         this.dataColumns = null;
     }
 }

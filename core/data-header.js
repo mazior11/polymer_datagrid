@@ -6,7 +6,7 @@ export default class HeaderData extends Data {
         super();
         this.type = ENUMS.ELEMENT_TYPE.HEADER;
         this._columnMouseEnterListeners = [];
-        this._htmlEl4CleanUp = this.htmlEL;
+        this._htmlEl4Dispose = this.htmlEL;
 
         this._eventResizeMouseUp = this._eventResizeMouseUp.bind(this);
         this._eventResizeMouseDown = this._eventResizeMouseDown.bind(this);
@@ -31,8 +31,8 @@ export default class HeaderData extends Data {
         super.column.headerSubColumn.dataRows.push(this)
     }
 
-    cleanUp(){
-        super.cleanUp();
+    Dispose(){
+        super.Dispose();
     
         this._columnMouseEnterListeners.forEach(listener => {
             listener.col.detachFromEvent(listener.id);
@@ -41,7 +41,7 @@ export default class HeaderData extends Data {
 
         this._cleanEventReposition();
         this._cleanEventResize();
-        this._htmlEl4CleanUp = null;
+        this._htmlEl4Dispose = null;
     }
 
     //#region Column Position
@@ -103,7 +103,7 @@ export default class HeaderData extends Data {
     }
 
     _cleanEventReposition(){
-        let htmlEl = this._htmlEl4CleanUp;
+        let htmlEl = this._htmlEl4Dispose;
         let contentHolderDiv = htmlEl.shadowRoot.querySelector('#content-holder-div');
         contentHolderDiv.removeEventListener('mousedown', this._eventRepositionMouseDown);
         document.removeEventListener('mouseup', this._eventRepositonMouseUp);
@@ -120,7 +120,7 @@ export default class HeaderData extends Data {
         let htmlEl = this.htmlEl;
         let resizeDiv = htmlEl.shadowRoot.querySelector('#resize-div');
         let tableHeight = this.column.table.htmlEl.offsetHeight;
-        resizeDiv.style.height = this.setToPixelVal(tableHeight - 45);
+        resizeDiv.style.height = this.setToPixelVal(tableHeight - 50);
         resizeDiv.addEventListener('mousedown', this._eventResizeMouseDown);
         document.addEventListener('mouseup', this._eventResizeMouseUp);
     }
@@ -164,7 +164,7 @@ export default class HeaderData extends Data {
     }
 
     _cleanEventResize(){
-        let htmlEl = this._htmlEl4CleanUp;
+        let htmlEl = this._htmlEl4Dispose;
         let resizeDiv = htmlEl.shadowRoot.querySelector('#resize-div');
         resizeDiv.style.height = this.setToPixelVal(htmlEl.offsetHeight);
         resizeDiv.removeEventListener('mousedown', this._eventResizeMouseDown);

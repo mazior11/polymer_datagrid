@@ -1,15 +1,17 @@
-import LazyPromise from "./lazy-promise";
 import { bindParams, generateUUID } from "./core";
-import { CleanUp } from "./base-el";
+import { Dispose } from "./base-el";
 import ENUMS from "./enums";
+import { EventManager } from "./core";
 
-class SubColumn extends CleanUp {
+class SubColumn extends Dispose {
     constructor() {
         super();
         this._firstCell;
         this._lastCell;
-        this.whenLastCellIsSet = new LazyPromise();
-        this.whenFirstCellIsSet = new LazyPromise();
+        this._whenLastCellIsSetEM = EventManager.createOneTimeEM();
+        this._whenFirstCellIsSetEM = EventManager.createOneTimeEM();
+        this.whenLastCellIsSet = this._whenLastCellIsSetEM.eventPromise;
+        this.whenFirstCellIsSet = this._whenFirstCellIsSetEM.eventPromise;
         this.dataRows = [];
     }
 
@@ -19,7 +21,7 @@ class SubColumn extends CleanUp {
 
     set lastCell(value) {
         this._lastCell = value;
-        this.whenLastCellIsSet.resolve();
+        this._whenLastCellIsSetEM.eventEmiter.next();
     }
 
     get firstCell() {
@@ -28,7 +30,7 @@ class SubColumn extends CleanUp {
 
     set firstCell(value) {
         this._firstCell = value;
-        this.whenFirstCellIsSet.resolve();
+        this._whenFirstCellIsSetEM.eventEmiter.next();
     }
 
     get width() {
@@ -39,29 +41,30 @@ class SubColumn extends CleanUp {
         return this.dataRows.forEach(dataRow => dataRow.htmlEl.style.width = value + 'px');
     }
 
-    cleanUp(){
-        super.cleanUp();
+    Dispose(){
+        super.Dispose();
 
         this._firstCell = null;
         this._lastCell = null;
 
-        this.dataRows.forEach(dataRow => dataRow.cleanUp())
+        this.dataRows.forEach(dataRow => dataRow.Dispose())
         this.dataRows = null;
     }
 }
 
-export default class Column extends CleanUp  {
+export default class Column extends Dispose  {
     constructor(table) {
         super();
         this.table = table;
         this.header = table.header;
         this.body = table.body;
         this._position = Column.position;
+        this._renderCompleteEM = EventManager.createOneTimeEM();
         this.id;
         this.dataRows = [];
         this.bodySubColumn = new SubColumn();
         this.headerSubColumn = new SubColumn();
-        this.renderComplete = new LazyPromise();
+        this.renderComplete = this._renderCompleteEM.eventPromise;
         this.eventListeners = [];
         Column.position++;
 
@@ -89,7 +92,7 @@ export default class Column extends CleanUp  {
                 return this.bodySubColumn.firstCell.whenHTMLElConnected;
             })
             .then(() => {
-                this.renderComplete.resolve();
+                this._renderCompleteEM.eventEmiter.next();
             })
 
         this.renderComplete
@@ -148,18 +151,18 @@ export default class Column extends CleanUp  {
         return dataRow;
     }
 
-    cleanUp(){
-        super.cleanUp();
+    Dispose(){
+        super.Dispose();
 
         this.table = null;
         this.header = null;
         this.body = null;
 
-        this.dataRows.forEach(dataRow => dataRow.cleanUp())
+        this.dataRows.forEach(dataRow => dataRow.Dispose())
         this.dataRows = null;
 
-        this.bodySubColumn.cleanUp();
-        this.headerSubColumn.cleanUp();
+        this.bodySubColumn.Dispose();
+        this.headerSubColumn.Dispose();
 
         this.bodySubColumn = null;
         this.headerSubColumn = null;

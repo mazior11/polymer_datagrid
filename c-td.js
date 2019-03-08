@@ -1,6 +1,5 @@
 import { html, PolymerElement } from '@polymer/polymer/polymer-element.js';
-import './node_modules/juicy-html/juicy-html.js';
-
+// import * as sanitize from "sanitize-html"
 
 export default class CTd extends PolymerElement {
     constructor() {
@@ -54,7 +53,8 @@ export default class CTd extends PolymerElement {
             }
         </style>
         <div id='content-holder-div'>
-        <template is="juicy-html" html="{{cellValue}}"></template>
+        <div>{{cellValue}}</div>
+        </template>
         </div>
         <template is="dom-if" if="{{_isEqualTo(type, 'HEADER')}}">
             <div id='resize-wrapper-div'>
@@ -110,6 +110,10 @@ export default class CTd extends PolymerElement {
 
     _isEqualTo(variable, value) {
         return variable == value;
+    }
+
+    _sanitizeHtml(value){
+        return sanitize(value);
     }
 
 }

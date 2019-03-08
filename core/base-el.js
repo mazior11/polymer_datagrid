@@ -1,32 +1,35 @@
-import LazyPromise from "./lazy-promise";
-
-export class CleanUp {
+import { EventManager } from "./core";
+export class Dispose {
     constructor(){
-        this._wasCleanUp = false;
+        this._wasDispose = false;
     }
 
-    get wasCleanUp(){
-        return this._wasCleanUp;
+    get wasDispose(){
+        return this._wasDispose;
     }
 
-    cleanUp(){
-        if(this._wasCleanUp)
+    Dispose(){
+        if(this._wasDispose)
             return;
-        this._wasCleanUp = true;
+        this._wasDispose = true;
     }
     
 }
 
-export default class BaseEl extends CleanUp {
+export default class BaseEl extends Dispose {
     constructor() {
         super();
         this._isHTMLELReady = false;
         this._isHTMLELConnected = false;
         this._htmlEL;
-        this.whenHTMLElReady = new LazyPromise();
-        this.whenHTMLElConnected = new LazyPromise();
-        this.whenObjectConstructed = new LazyPromise();
-        this.whenDataChanged = new LazyPromise();
+        this._whenHTMLElReadyEM = EventManager.createOneTimeEM();
+        this._whenHTMLElConnectedEM = EventManager.createOneTimeEM();
+        this._whenObjectConstructedEM = EventManager.createOneTimeEM();
+        this._whenDataChangedEM = EventManager.createOneTimeEM();
+        this.whenHTMLElReady = this._whenHTMLElReadyEM.eventPromise;
+        this.whenHTMLElConnected = this._whenHTMLElConnectedEM.eventPromise;
+        this.whenObjectConstructed = this._whenObjectConstructedEM.eventPromise;
+        this.whenDataChanged = this._whenDataChangedEM.eventPromise;
     }
 
     get htmlEL() {
@@ -44,9 +47,9 @@ export default class BaseEl extends CleanUp {
     set isHTMLELReady(value) {
         this._isHTMLELReady = value;
         if (value)
-            this.whenHTMLElReady.resolve();
+            this._whenHTMLElReadyEM.eventEmiter.next();
         else
-            this.whenHTMLElReady.reject();
+            this._whenHTMLElReadyEM.eventEmiter.throw();
     }
 
     get isHTMLELConnected() {
@@ -56,9 +59,9 @@ export default class BaseEl extends CleanUp {
     set isHTMLELConnected(value) {
         this._isHTMLELConnected = value;
         if (value)
-            this.whenHTMLElConnected.resolve();
+            this._whenHTMLElConnectedEM.eventEmiter.next();
         else
-            this.whenHTMLElConnected.reject();
+            this._whenHTMLElConnectedEM.eventEmiter.throw();
     }
 
 
@@ -67,8 +70,8 @@ export default class BaseEl extends CleanUp {
         return value + 'px';
     }
 
-    cleanUp(){
-        super.cleanUp();
+    Dispose(){
+        super.Dispose();
         this._htmlEL = null;
     }
 }
