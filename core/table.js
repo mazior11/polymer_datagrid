@@ -1,8 +1,7 @@
 import Body from "./body";
 import Header from "./header";
 import BaseEl from "./base-el";
-import * as rxjs  from "rxjs";
-import * as rxjsOperators  from 'rxjs/operators';
+import Column from "./column";
 import { EventManager } from "./core";
 import GridConfiguration from "./gridConfiguration";
 
@@ -16,11 +15,13 @@ export default class Table extends BaseEl {
         this._lastColumn;
         this._whenDataReadyEM = EventManager.createOneTimeEM();
         this._renderCompleteEM = EventManager.createOneTimeEM();
+        this._whenColumnCreatedEM = EventManager.createOneTimeEM();
         this.columns = [];
-        this.body = new Body(this);
-        this.header = new Header(this);
+        this.body = new Body(this, addons);
+        this.header = new Header(this, addons);
         this.whenDataReady = this._whenDataReadyEM.eventPromise;
         this.renderComplete = this._renderCompleteEM.eventPromise;
+        this.whenColumnCreated = this._whenColumnCreatedEM.eventPromise;
 
         Promise.all([this.body.whenDataReady, this.header.whenDataReady]).then(() => {
             this._isReady = true;
@@ -71,6 +72,16 @@ export default class Table extends BaseEl {
 
     get lastBodyCell() {
         return this._lastBodyCell;
+    }
+
+    createColumnsFromDefinition(defCols){
+        for(let defCol of defCols){
+            var column = new Column(this);
+            column.id = defCol.id;
+            column.headerName = defCol.headerName;
+            this.columns.push(column)
+            this._whenColumnCreatedEM.eventEmiter.next();
+        }
     }
 
     moveColumn(oldPosition, newPosition){

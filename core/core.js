@@ -29,7 +29,7 @@ class OneTimeEventManager {
     }
 }
 
-class EventManager {
+class MutliEventManager {
     constructor(){
         this.eventEmiter;
         this.eventPromise = rxjs.Observable.create(e => this.eventEmiter = e);
@@ -41,7 +41,7 @@ export let EventManager = {
         return new OneTimeEventManager();
     },
     createEM(){
-        return new EventManager();
+        return new MutliEventManager();
     }
 }
 

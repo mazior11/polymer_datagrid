@@ -61,6 +61,7 @@ export default class Column extends Dispose  {
         this._position = Column.position;
         this._renderCompleteEM = EventManager.createOneTimeEM();
         this.id;
+        this.headerName; 
         this.dataRows = [];
         this.bodySubColumn = new SubColumn();
         this.headerSubColumn = new SubColumn();
@@ -87,9 +88,6 @@ export default class Column extends Dispose  {
                     this.bodySubColumn.firstCell = bodyDataRows[0];
                     this.bodySubColumn.lastCell = bodyDataRows[bodyDataRows.length - 1];
                 }
-            })
-            .then(() => {
-                return this.bodySubColumn.firstCell.whenHTMLElConnected;
             })
             .then(() => {
                 this._renderCompleteEM.eventEmiter.next();
@@ -121,6 +119,11 @@ export default class Column extends Dispose  {
     get isRender() {
         return this._lastBodyCell.isRender;
     }
+
+    html(obj){
+        return obj[this.id];
+    }
+
 
     removeElement(dataRow){
         if(!this.dataRows || this.dataRows.length <= 0)

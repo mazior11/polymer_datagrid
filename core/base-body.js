@@ -10,13 +10,11 @@ export default class BaseBody extends BaseEl {
         this._isDataReady = false;
         this._whenDataReadyEM = EventManager.createOneTimeEM();
         this._whenRowCreatedEM = EventManager.createOneTimeEM();
-        this._whenColumnCreatedEM = EventManager.createOneTimeEM();
         this.rows = [];
         this.table = table;
         this.type = ENUMS.ELEMENT_TYPE.UNDEFINED;
         this.whenDataReady = this._whenDataReadyEM.eventPromise;
         this.whenRowCreated = this._whenRowCreatedEM.eventPromise;
-        this.whenColumnCreated = this._whenColumnCreatedEM.eventPromise;
     }
 
     get columns() {
@@ -35,13 +33,6 @@ export default class BaseBody extends BaseEl {
             this._whenDataReadyEM.eventEmiter.throw();
     }
 
-    getOrCreateRow(rowId) {
-        let row = this.getRow(rowId)
-        if (row)
-            return row
-        return this.createRow(rowId)
-    }
-
     createRow(rowId) {
         var row = new Row(this.table);
         row.id = rowId;
@@ -52,22 +43,6 @@ export default class BaseBody extends BaseEl {
 
     getRow(rowId) {
         return this.rows.find(row => row.id === rowId)
-    }
-
-
-    getOrCreateColumn(colId) {
-        let col = this.getColumn(colId)
-        if (col)
-            return col
-        return this.createColumn(colId)
-    }
-
-    createColumn(colId) {
-        var column = new Column(this.table);
-        column.id = colId;
-        this.columns.push(column)
-        this._whenColumnCreatedEM.eventEmiter.next();
-        return column
     }
 
     getColumn(colId) {

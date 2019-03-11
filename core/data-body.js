@@ -2,8 +2,11 @@ import Data from "./data";
 import ENUMS from "./enums";
 
 export default class BodyData extends Data {
-    constructor(){
+    constructor(value, column, row){
         super();
+        this.value = value;
+        this.column = column;
+        this.row = row;
         this.type = ENUMS.ELEMENT_TYPE.BODY;
     }
 

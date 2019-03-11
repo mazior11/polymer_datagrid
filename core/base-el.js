@@ -1,17 +1,17 @@
 import { EventManager } from "./core";
 export class Dispose {
     constructor(){
-        this._wasDispose = false;
+        this._isDisposed = false;
     }
 
-    get wasDispose(){
-        return this._wasDispose;
+    get isDisposed(){
+        return this._isDisposed;
     }
 
     Dispose(){
-        if(this._wasDispose)
+        if(this._isDisposed)
             return;
-        this._wasDispose = true;
+        this._isDisposed = true;
     }
     
 }

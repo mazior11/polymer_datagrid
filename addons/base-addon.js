@@ -1,22 +1,58 @@
 import { EventManager } from "../core/core";
 import { EventManager } from "./core";
-import { createSecurePair } from "tls";
 
 export default class BaseAddon {
-    constructor(){
-        this._table;
+    constructor(TableType, HeaderType, BodyType, ColumnType, CellHeaderType, CellBodyType){
+        this._TableType = TableType;
+        this._HeaderType = HeaderType || BaseBody;
+        this._BodyType = BodyType || BaseBody;
+        this._ColumnType = ColumnType || Column;
+        this._CellHeaderType = CellHeaderType || Cell;
+        this._CellBodyType = CellBodyType || Cell;
         this._whenInitializeEM = EventManager.createOneTimeEM();
+
         this.whenInitialized = this._whenInitializeEM.eventPromise;
+        this.table;
     }
 
-    initialize(table) {
-        this._table = table;
-        this.whenInitialized.next();
+    createHeader(){
+        this.table.header = new this._HeaderType();
+    }
+
+    createBody(){
+        this.table.body = new this._BodyType();
+    }
+
+
+    createTable(){
+        this.table = new this._TableType();
+    }
+
+    createColumn(){
+        let column = new this._ColumnType();
+        column.table = this.table;
+        this.table.columns.push(column);
+    }
+
+    createCellHeader(){
+        return new this._CellHeaderType();
+    }
+
+    createCellBody(){
+        return new this._CellBodyType();
+    }
+
+    initialize(){
+        
     }
 }
 
 class BaseEl {
-    constructor(coreEl){
+    constructor(){
+        this._coreEl;
+    }
+
+    initialize(){
         this._coreEl = coreEl;
     }
 
@@ -28,49 +64,56 @@ class BaseEl {
         return this._baseEl.htmlEL;
     }
 
-    get htmlEL() {
+    get whenHTMLElReady() {
         return this._baseEl.whenHTMLElReady;
     }
 
-    get htmlEL() {
+    get whenHTMLElConnected() {
         return this._baseEl.whenHTMLElConnected;
     }
 
-    get htmlEL() {
+    get whenObjectConstructed() {
         return this._baseEl.whenObjectConstructed;
     }
 
-    get htmlEL() {
+    get whenDataChanged() {
         return this._baseEl.whenDataChanged;
     }
 
-    dispose(){
+    Dispose(){
         this._coreEl = null;
     }
 }
 
 export class Table extends BaseEl {
-    constructor(coreTable, THeaderType, TBodyType, TColumnType, TCellHeader, TCellBody){
-        super(coreTable);
-        THeaderType = THeaderType || BaseBody;
-        TBodyType = TBodyType || BaseBody;
-        TColumnType = TColumnType || Column;
-        TCellHeader = TCellHeader || Cell;
-        TCellBody = TCellBody || Cell;
-        this._header = new THeaderType(this, coreTable.header);
-        this._body = new TBodyType(this, coreTable.body);
+    constructor(){
+        this.columns = [];
+    }
+
+    initialize(coreEl){
+        super.initialize(coreEl)
     }
 
     get header(){
         return this._header;
     }
 
+    set header(value){
+        this._header = value;
+        this._header.table = this;
+    }
+
     get body(){
         return this._body;
     }
 
+    set body(value){
+        this._body = value;
+        this._body.table = this;
+    }
+
     get columns(){
-        return this.super.coreEl.columns;
+        return this._columns;
     }
 
     get whenDataReady(){
@@ -83,13 +126,19 @@ export class Table extends BaseEl {
 }
 
 export class BaseBody extends BaseEl {
-    constructor(table, coreEl){
-        super(coreEl);
-        this._table = table;
+    constructor(){
+    }
+
+    initialize(coreEl){
+        super.initialize(coreEl)
     }
 
     get table(){
         return this._table;
+    }
+
+    set table(value){
+        this._table = value;
     }
 
     get rows(){
@@ -115,14 +164,24 @@ export class BaseBody extends BaseEl {
 }
 
 export class Column extends BaseEl {
-    constructor(table, coreEl){
-        super(coreEl)
-        this._table = table;
+    constructor(){
+    }
+        get table(){
+            return this._table;
+        }
+
+        set table(value){
+            this._table = value;
+        }
     }
 }
 
 export class Cell extends BaseEl {
-    constructor(coreEl){
-        super(coreEl)
+    constructor(){
+        super()
+    }
+
+    initialize(coreEl){
+        super.initialize(coreEl)
     }
 }

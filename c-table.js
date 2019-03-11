@@ -1,5 +1,5 @@
 import { html, PolymerElement } from '@polymer/polymer/polymer-element.js';
-import Table, { BodyData, HeaderData, ENUMS, GridConfiguration } from "./core/index";
+import Table, { ENUMS, GridConfiguration } from "./core/index";
 import CBody from "./c-body";
 import CPager from "./c-pager"
 
@@ -34,6 +34,7 @@ export default class CTable extends PolymerElement {
       },
       data: {
         type: Array,
+        observer: "_processData"
       },
       gridConfiguration: {
         type: Object,
@@ -50,12 +51,10 @@ export default class CTable extends PolymerElement {
       headerData: {
         type: Array,
         value: [],
-        computed: '_processHeaderData(data)'
       },
       bodyData: {
         type: Array,
         value: [],
-        computed: '_processBodyData(data)'
       },
       bodyType: {
         type: Object,
@@ -79,45 +78,22 @@ export default class CTable extends PolymerElement {
     this.table.htmlEl = this;
   }
 
-  _processBodyData(data) {
-    let processData = data.map((obj, index) => {
-      return this.columns.map((col) => {
-        let bodyData = new BodyData();
-        bodyData.value = col.html(obj);
-        bodyData.column = this.table.body.getOrCreateColumn(col.id)
-        bodyData.row = this.table.body.getOrCreateRow(index);
-        return bodyData;
-      });
-    })
-    this.table.body.isDataReady = true;
-    return processData;
-  }
-
-  _processHeaderData(data) {
+  _processData(data){
     //set columns before process any data
     if (this.autoGenerateColumns)
       this.columns = this._toColumns(this.data[0]);
 
-    data = [data[0]]
-    let processData = data.map((obj, index) => {
-      return this.columns.map((col) => {
-        let headerData = new HeaderData();
-        headerData.value = col.header;
-        headerData.column = this.table.header.getOrCreateColumn(col.id)
-        headerData.row = this.table.header.getOrCreateRow(index);
-        return headerData;
-      });
-    })
-    this.table.header.isDataReady = true;
-    return processData
+    this.table.createColumnsFromDefinition(this.columns);
+
+    this.headerData = this.table.header.processData(data);
+    this.bodyData = this.table.body.processData(data);
   }
 
   _toColumns(obj) {
     return Object.keys(obj).map(function (key, index) {
       return {
         id: key,
-        header: key,
-        html: (obj) => obj[key]
+        headerName: key
       };
     });
   }
